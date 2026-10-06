@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Cartão de Crédito Corporativo — Controle</title>
+<link rel="stylesheet" href="./css/theme.css"/>
+</head>
+<body>
+<div class="app">
+
+  <!-- ============ CABEÇALHO / AÇÕES ============ -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo" aria-label="Logo placeholder"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></div>
+      <div>
+        <h1>Cartão de Crédito Corporativo — Controle</h1>
+        <div class="sub">Dashboard analítico offline · <span class="path">dados de exemplo fictícios · Instituição Exemplo</span></div>
+      </div>
+    </div>
+    <div class="actions">
+      <span class="dot" id="live"></span><span class="sub" id="status">Nenhuma base carregada</span>
+      <button class="btn" id="btnFolder" title="Selecionar a pasta da base (monitoramento automático)">📁 Pasta da base</button>
+      <button class="btn" id="btnFile" title="Selecionar o arquivo .xlsx">📄 Abrir .xlsx</button>
+      <button class="btn primary" id="btnRefresh" title="Recarregar dados em tempo real">🔄 Atualizar</button>
+      <button class="btn" id="btnAuto" title="Ligar/desligar atualização automática">⏱️ Auto: ON</button>
+    </div>
+  </header>
+
+  <!-- ============ FILTROS ============ -->
+  <section class="filters" id="filters">
+    <div class="field"><label>Ano</label><select id="fAno"></select></div>
+    <div class="field"><label>Mês</label><select id="fMes"></select></div>
+    <div class="field"><label>Bandeira</label><select id="fBandeira"></select></div>
+    <div class="field"><label>Cartão</label><select id="fCartao"></select></div>
+    <div class="field"><label>Natureza</label><select id="fNatureza"></select></div>
+    <div class="field"><label>Departamento</label><select id="fDepto"></select></div>
+    <div class="field"><label>Status</label><select id="fStatus"></select></div>
+    <div class="field"><label>&nbsp;</label><button class="btn-ghost" id="btnClear" style="width:100%">✕ Limpar filtros</button></div>
+  </section>
+
+  <!-- ============ KPIs ============ -->
+  <section class="kpis" id="kpis"></section>
+
+  <!-- ============ ESTADO VAZIO ============ -->
+  <div class="drop" id="drop">
+    <strong>Arraste o arquivo base_de_dados.xlsx aqui</strong><br/>
+    ou use <b>📁 Pasta da base</b> (recomendado: monitora a pasta e atualiza sozinho) ou <b>📄 Abrir .xlsx</b>.<br/>
+    <span class="path" style="color:var(--muted)">Depois da primeira escolha, o dashboard reabre e relê a base sozinho.</span>
+  </div>
+
+  <!-- ============ VISUALIZAÇÕES ============ -->
+  <main id="dash" class="hidden">
+    <section class="grid">
+      <div class="card span8">
+        <h3>Evolução mensal dos gastos</h3><div class="hint">Colunas = valor do mês · Linha = média móvel (3 meses)</div>
+        <div class="cwrap"><canvas id="chMes"></canvas></div>
+      </div>
+      <div class="card span4">
+        <h3>Composição por Natureza</h3><div class="hint">Participação no total filtrado</div>
+        <div class="cwrap"><canvas id="chNatureza"></canvas></div>
+      </div>
+
+      <div class="card span6">
+        <h3>Ranking por Departamento</h3><div class="hint">Barras horizontais · maiores consumidores</div>
+        <div class="cwrap"><canvas id="chDepto"></canvas></div>
+      </div>
+      <div class="card span3">
+        <h3>Bandeira</h3><div class="hint">Distribuição do valor</div>
+        <div class="cwrap"><canvas id="chBandeira"></canvas></div>
+      </div>
+      <div class="card span3">
+        <h3>Status</h3><div class="hint">Validado x demais</div>
+        <div class="cwrap"><canvas id="chStatus"></canvas></div>
+      </div>
+
+      <div class="card span12">
+        <h3>Acumulado no período</h3><div class="hint">Linha de tendência acumulada por data</div>
+        <div class="cwrap"><canvas id="chAcum"></canvas></div>
+      </div>
+
+      <div class="card span12">
+        <h3>Árvore de decomposição</h3>
+        <div class="hint">Clique nos nós para detalhar: Ano → Departamento → Natureza → Descrição</div>
+        <div class="tree" id="tree"></div>
+      </div>
+
+      <div class="card span12">
+        <h3>💡 Insights automáticos</h3><div class="hint">Gerados a cada carga/atualização da base</div>
+        <div class="insights" id="insights"></div>
+      </div>
+
+      <div class="card span12">
+        <h3>Maiores lançamentos</h3><div class="hint">Top 15 do recorte atual</div>
+        <div style="overflow:auto"><table id="tbl"><thead><tr>
+          <th>Data</th><th>Bandeira</th><th>Cartão</th><th>Natureza</th><th>Descrição</th><th>Departamento</th><th>Status</th><th class="right">Valor</th>
+        </tr></thead><tbody></tbody></table></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<input type="file" id="fileInput" accept=".xlsx,.xls,.csv" class="hidden"/>
+<div class="toast" id="toast"></div>
+
+<!-- Bibliotecas de terceiros via CDN (requer internet) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<!-- Código da aplicação (pasta js) -->
+<script src="./js/core.js"></script>
+<script src="./js/views.js"></script>
+<script src="./js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+# Dados reais nunca devem ser versionados
+*.xlsx
+*.xls
+*.csv
+!dados_exemplo/*.xlsx
+*.pdf
+*.docx
+*.zip
+comprovantes/
+Despesas/
+Diretrizes/
+.env
+.env.*
+__pycache__/
+*.pyc
+.vscode/
+Thumbs.db
